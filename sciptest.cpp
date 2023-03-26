@@ -6,6 +6,11 @@ SCIP_RETCODE execmain(int argc, const char **argv)
 {
 	SCIP *scip = nullptr;
 
+	// This program needs the scip libraries and binaries. They can be downloaded from https://www.scipopt.org/index.php#download (precompiled packages)
+	// Make sure that the bin folder is in the path and change the project properies
+	//   C/C++, Additional include directories
+	//   Linker, Additional library directories
+
 	//See https://scipopt.org/doc/html/group__GlobalProblemMethods.php
 	
 	SCIP_CALL(SCIPcreate(&scip));  //Creating the SCIP environment
@@ -114,6 +119,8 @@ SCIP_RETCODE execmain(int argc, const char **argv)
 	// https://scipopt.org/doc/html/group__CONSHDLRS.php#ga97f2ccf48759b477a9c8cc2461c044e9
 	SCIP_CALL(SCIPcreateConsBasicNonlinear(scip, &cons4, "cons4", expr4, -SCIPinfinity(scip), 9.6));
 
+	SCIP_CALL(SCIPreleaseExpr(scip, &expr4));
+
 	SCIP_CALL(SCIPaddCons(scip, cons4));
 
 #if 1
@@ -141,7 +148,7 @@ SCIP_RETCODE execmain(int argc, const char **argv)
 
 	SCIP_VAR **vars;
 
-	vars = SCIPgetVars(scip);
+	//vars = SCIPgetVars(scip);
 
 	unsigned int isDualSolAvailable = SCIPisDualSolAvailable(scip, TRUE);
 

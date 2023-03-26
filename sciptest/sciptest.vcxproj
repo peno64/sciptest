@@ -104,12 +104,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\SCIPOptSuite 8.0.3\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>d:\SCIPOptSuite 8.0.3\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\SCIPOptSuite 8.0.3\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>d:\SCIPOptSuite 8.0.3\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>libscip.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
