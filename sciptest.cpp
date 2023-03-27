@@ -12,7 +12,7 @@ SCIP_RETCODE execmain(int argc, const char **argv)
 	//   Linker, Additional library directories
 
 	//See https://scipopt.org/doc/html/group__GlobalProblemMethods.php
-	
+
 	SCIP_CALL(SCIPcreate(&scip));  //Creating the SCIP environment
 
 	/* include default plugins */
@@ -20,6 +20,8 @@ SCIP_RETCODE execmain(int argc, const char **argv)
 
 	//Creating the SCIP Problem.
 	SCIP_CALL(SCIPcreateProbBasic(scip, "SCIP_test"));
+
+	//SCIPprintVersion(scip, stdout);
 
 	SCIP_CALL(SCIPsetObjsense(scip, SCIP_OBJSENSE_MAXIMIZE));
 
@@ -36,7 +38,7 @@ SCIP_RETCODE execmain(int argc, const char **argv)
 
 	SCIP_CALL(SCIPaddVar(scip, x1));  //Adding the first variable
 
-	SCIP_VAR *x2 = nullptr;;
+	SCIP_VAR *x2 = nullptr;
 
 	SCIP_CALL(SCIPcreateVarBasic(scip,
 		&x2,                     // returns new index
@@ -48,7 +50,11 @@ SCIP_RETCODE execmain(int argc, const char **argv)
 
 	SCIP_CALL(SCIPaddVar(scip, x2)); //Adding the second variable
 
-	SCIP_CALL(SCIPaddVarObj(scip, x2, 2.0));
+	SCIP_CALL(SCIPchgVarUb(scip, x2, 1000.0));
+
+	//SCIP_CALL(SCIPaddVarObj(scip, x2, 2.0));
+
+	SCIP_CALL(SCIPchgVarObj(scip, x2, 2.0));
 
 	SCIP_CONS *cons1 = nullptr;
 
@@ -105,11 +111,11 @@ SCIP_RETCODE execmain(int argc, const char **argv)
 		px,
 		row,
 		2.0,
-		SCIPinfinity(scip)));
+		SCIPinfinity(scip)));	
 #endif
 	SCIP_CALL(SCIPaddCons(scip, cons3));
 
-	SCIP_CONS *cons4 = nullptr;;
+	SCIP_CONS *cons4 = nullptr;
 	SCIP_EXPR *expr4;
 	double b = 3.14;
 
@@ -138,9 +144,21 @@ SCIP_RETCODE execmain(int argc, const char **argv)
 	//Solving the problem
 	SCIP_CALL(SCIPsolve(scip));
 
+	SCIP_STATUS status = SCIPgetStatus(scip);
+
+	int nSols = SCIPgetNSols(scip);
+
 	SCIP_SOL *sol = nullptr;
 
 	sol = SCIPgetBestSol(scip);
+
+	double obj1 = SCIPgetDualbound(scip);
+
+	double obj2 = SCIPgetSolOrigObj(scip, sol);
+
+	SCIP_Bool feasible = sol != NULL;
+
+	SCIP_CALL(SCIPcheckSolOrig(scip, sol, &feasible, FALSE, FALSE));
 
 	std::cout << "x1: " << SCIPgetSolVal(scip, sol, x1) << " " << "x2: " << SCIPgetSolVal(scip, sol, x2) << "\n";
 
