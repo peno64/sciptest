@@ -4,6 +4,8 @@
 
 SCIP_RETCODE execmain(int argc, const char **argv)
 {
+	SCIP_RETCODE ret;
+
 	SCIP *scip = nullptr;
 
 	// This program needs the scip libraries and binaries. They can be downloaded from https://www.scipopt.org/index.php#download (precompiled packages)
@@ -135,11 +137,59 @@ SCIP_RETCODE execmain(int argc, const char **argv)
 	SCIP_CALL(SCIPsetIntParam(scip, "presolving/maxrounds", 0)); /* turns presolve off */
 #endif
 
+	ret = SCIPsetIntParam(scip, "presolving/milp/maxrounds", 0);
+	ret = SCIPsetIntParam(scip, "presolving/trivial/maxrounds", 0);
+	ret = SCIPsetIntParam(scip, "presolving/inttobinary/maxrounds", 0);
+	ret = SCIPsetIntParam(scip, "presolving/gateextraction/maxrounds", 0);
+	ret = SCIPsetIntParam(scip, "presolving/dualcomp/maxrounds", 0);
+	ret = SCIPsetIntParam(scip, "presolving/domcol/maxrounds", 0);
+	ret = SCIPsetIntParam(scip, "presolving/implics/maxrounds", 0);
+	ret = SCIPsetIntParam(scip, "presolving/sparsify/maxrounds", 0);
+	ret = SCIPsetIntParam(scip, "presolving/dualsparsify/maxrounds", 0);
+	ret = SCIPsetIntParam(scip, "propagating/dualfix/maxprerounds", 0);
+	ret = SCIPsetIntParam(scip, "propagating/genvbounds/maxprerounds", 0);
+	ret = SCIPsetIntParam(scip, "propagating/obbt/maxprerounds", 0);
+	ret = SCIPsetIntParam(scip, "propagating/nlobbt/maxprerounds", 0);
+	ret = SCIPsetIntParam(scip, "propagating/probing/maxprerounds", 0);
+	ret = SCIPsetIntParam(scip, "propagating/pseudoobj/maxprerounds", 0);
+	ret = SCIPsetIntParam(scip, "propagating/redcost/maxprerounds", 0);
+	ret = SCIPsetIntParam(scip, "propagating/rootredcost/maxprerounds", 0);
+	ret = SCIPsetIntParam(scip, "propagating/symmetry/maxprerounds", 0);
+	ret = SCIPsetIntParam(scip, "propagating/vbounds/maxprerounds", 0);
+	ret = SCIPsetIntParam(scip, "constraints/cardinality/maxprerounds", 0);
+	ret = SCIPsetIntParam(scip, "constraints/SOS1/maxprerounds", 0);
+	ret = SCIPsetIntParam(scip, "constraints/SOS2/maxprerounds", 0);
+	ret = SCIPsetIntParam(scip, "constraints/varbound/maxprerounds", 0);
+	ret = SCIPsetIntParam(scip, "constraints/knapsack/maxprerounds", 0);
+	ret = SCIPsetIntParam(scip, "constraints/setppc/maxprerounds", 0);
+	ret = SCIPsetIntParam(scip, "constraints/linking/maxprerounds", 0);
+	ret = SCIPsetIntParam(scip, "constraints/or/maxprerounds", 0);
+	ret = SCIPsetIntParam(scip, "constraints/and/maxprerounds", 0);
+	ret = SCIPsetIntParam(scip, "constraints/xor/maxprerounds", 0);
+	ret = SCIPsetIntParam(scip, "constraints/conjunction/maxprerounds", 0);
+	ret = SCIPsetIntParam(scip, "constraints/disjunction/maxprerounds", 0);
+	ret = SCIPsetIntParam(scip, "constraints/linear/maxprerounds", 0);
+	ret = SCIPsetIntParam(scip, "constraints/orbisack/maxprerounds", 0);
+	ret = SCIPsetIntParam(scip, "constraints/orbitope/maxprerounds", 0);
+	ret = SCIPsetIntParam(scip, "constraints/symresack/maxprerounds", 0);
+	ret = SCIPsetIntParam(scip, "constraints/logicor/maxprerounds", 0);
+	ret = SCIPsetIntParam(scip, "constraints/bounddisjunction/maxprerounds", 0);
+	ret = SCIPsetIntParam(scip, "constraints/cumulative/maxprerounds", 0);
+	ret = SCIPsetIntParam(scip, "constraints/nonlinear/maxprerounds", 0);
+	ret = SCIPsetIntParam(scip, "constraints/pseudoboolean/maxprerounds", 0);
+	ret = SCIPsetIntParam(scip, "constraints/superindicator/maxprerounds", 0);
+	ret = SCIPsetIntParam(scip, "constraints/indicator/maxprerounds", 0);
+	ret = SCIPsetIntParam(scip, "constraints/components/maxprerounds", 0);
+	ret = SCIPsetIntParam(scip, "presolving/maxrestarts", 0);
+	ret = SCIPsetIntParam(scip, "presolving/maxrounds", 0);
+
 	SCIP_CALL(SCIPsetRealParam(scip, "numerics/feastol", 1e-8));
 	SCIP_CALL(SCIPsetRealParam(scip, "numerics/epsilon", 1e-8));
 	SCIP_CALL(SCIPsetRealParam(scip, "numerics/dualfeastol", 1e-8));
 
 	SCIP_CALL(SCIPsetRealParam(scip, "limits/gap", 1e-6));
+
+	SCIP_CALL(SCIPenableReoptimization(scip, 1));
 
 	//Solving the problem
 	SCIP_CALL(SCIPsolve(scip));
@@ -185,6 +235,9 @@ SCIP_RETCODE execmain(int argc, const char **argv)
 	a = 3.14 * SCIPgetSolVal(scip, sol, x1) * SCIPgetSolVal(scip, sol, x2);
 
 	//SCIPprintBestSol(scip, stdout, TRUE);
+
+	ret = SCIPchgVarUb(scip, x2, 1001.0);
+	SCIP_CALL(ret);
 
 	SCIP_CALL((SCIPwriteOrigProblem(scip, "sciptest.lp", nullptr, FALSE)));
 	SCIP_CALL((SCIPwriteOrigProblem(scip, "sciptest.mps", nullptr, FALSE)));
