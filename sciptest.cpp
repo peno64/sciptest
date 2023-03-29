@@ -236,6 +236,8 @@ SCIP_RETCODE execmain(int argc, const char **argv)
 
 	//SCIPprintBestSol(scip, stdout, TRUE);
 
+	ret = SCIPfreeReoptSolve(scip);
+
 	ret = SCIPchgVarUb(scip, x2, 1001.0);
 	SCIP_CALL(ret);
 
