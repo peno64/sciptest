@@ -238,7 +238,7 @@ SCIP_RETCODE execmain(int argc, const char **argv)
 
 	ret = SCIPfreeReoptSolve(scip);
 
-	ret = SCIPchgVarUb(scip, x2, 1001.0);
+	ret = SCIPchgVarUb(scip, x2, 2.77);
 	SCIP_CALL(ret);
 
 	SCIP_CALL((SCIPwriteOrigProblem(scip, "sciptest.lp", nullptr, FALSE)));
