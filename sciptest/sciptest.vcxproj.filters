@@ -18,10 +18,10 @@
     <ClCompile Include="..\sciptest1.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="sciptest2.cpp">
+    <ClCompile Include="..\sciptest2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="..\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
