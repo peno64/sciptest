@@ -181,7 +181,7 @@ SCIP_RETCODE execmain(int argc, const char **argv)
 	return SCIP_OKAY;
 }
 
-int main(int argc, const char *argv[])
+int sciptest1(int argc, const char *argv[])
 {
 	return execmain(argc, argv) != SCIP_OKAY ? 1 : 0;
 }
