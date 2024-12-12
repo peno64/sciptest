@@ -450,6 +450,15 @@ int sciptest2()
             SCIP_STATUS status = SCIPgetStatus(scip);
             status = status;
         }
+
+        SCIP_VAR *x0_t;
+        ret = SCIPgetTransformedVar(scip, allvars[0], &x0_t);
+        SCIP_COL *col0_t = SCIPvarGetCol(x0_t);
+        SCIP_BASESTAT baseStat_t = SCIPcolGetBasisStatus(col0_t);
+
+        SCIP_COL *col0 = SCIPvarGetCol(allvars[0]);
+        SCIP_BASESTAT baseStat = SCIPcolGetBasisStatus(col0);
+
         ret = SCIPreleaseCons(scip, &allcons[0]);
         ret = SCIPreleaseCons(scip, &allcons[1]);
         ret = SCIPreleaseCons(scip, &allcons[2]);

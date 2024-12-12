@@ -2,6 +2,32 @@
 #include <scip/scip.h>
 #include <scip/scipdefplugins.h>
 
+SCIP_RETCODE execmain1(int argc, const char **argv)
+{
+	SCIP_RETCODE ret;
+
+	SCIP *scip = nullptr;
+
+	SCIP_CALL(SCIPcreate(&scip));  //Creating the SCIP environment
+
+	/* include default plugins */
+	SCIP_CALL(SCIPincludeDefaultPlugins(scip));
+
+	SCIP_RESULT result;
+	SCIP_CALL(SCIPreadLp(scip, nullptr, "sciptest.lp", &result));
+
+	SCIP_CALL((SCIPwriteOrigProblem(scip, "sciptest'.lp", nullptr, FALSE)));
+
+	SCIP_CALL(SCIPsolve(scip));
+
+	SCIP_VAR **vars = SCIPgetVars(scip);
+
+	SCIP_COL *col1 = SCIPvarGetCol(vars[0]);
+	SCIP_BASESTAT baseStat = SCIPcolGetBasisStatus(col1);
+
+
+}
+
 SCIP_RETCODE execmain(int argc, const char **argv)
 {
 	SCIP_RETCODE ret;
@@ -117,6 +143,9 @@ SCIP_RETCODE execmain(int argc, const char **argv)
 #endif
 	SCIP_CALL(SCIPaddCons(scip, cons3));
 
+//#define NLP
+
+#if NLP
 	SCIP_CONS *cons4 = nullptr;
 	SCIP_EXPR *expr4;
 	double b = 3.14;
@@ -130,7 +159,9 @@ SCIP_RETCODE execmain(int argc, const char **argv)
 	SCIP_CALL(SCIPreleaseExpr(scip, &expr4));
 
 	SCIP_CALL(SCIPaddCons(scip, cons4));
+#endif
 
+#if 0
 #if 1
 	SCIP_CALL(SCIPsetBoolParam(scip, "lp/presolving", 0)); /* turns presolve off */
 	SCIP_CALL(SCIPsetBoolParam(scip, "concurrent/presolvebefore", 0)); /* turns presolve off */
@@ -182,6 +213,7 @@ SCIP_RETCODE execmain(int argc, const char **argv)
 	ret = SCIPsetIntParam(scip, "constraints/components/maxprerounds", 0);
 	ret = SCIPsetIntParam(scip, "presolving/maxrestarts", 0);
 	ret = SCIPsetIntParam(scip, "presolving/maxrounds", 0);
+#endif
 
 	SCIP_CALL(SCIPsetRealParam(scip, "numerics/feastol", 1e-8));
 	SCIP_CALL(SCIPsetRealParam(scip, "numerics/epsilon", 1e-8));
@@ -193,6 +225,29 @@ SCIP_RETCODE execmain(int argc, const char **argv)
 
 	//Solving the problem
 	SCIP_CALL(SCIPsolve(scip));
+
+
+	SCIP_VAR **allvars = SCIPgetVars(scip);
+
+	int n = SCIPgetNOrigVars(scip);
+
+	SCIP_COL *col0 = SCIPvarGetCol(allvars[0]);
+	SCIP_BASESTAT baseStat = SCIPcolGetBasisStatus(col0);
+
+	SCIP_VAR *x1_t;
+	ret = SCIPgetTransformedVar(scip, x1, &x1_t);
+
+	for (int i = 0; i < n; i++)
+	{
+		if (allvars[i] == x1)
+			break;
+		if (allvars[i] == x1_t)
+			break;
+	}
+
+	SCIP_COL *col1 = SCIPvarGetCol(x1_t);
+	SCIP_BASESTAT baseStat1 = SCIPcolGetBasisStatus(col1);
+
 
 	SCIP_STATUS status = SCIPgetStatus(scip);
 
@@ -212,7 +267,7 @@ SCIP_RETCODE execmain(int argc, const char **argv)
 
 	std::cout << "x1: " << SCIPgetSolVal(scip, sol, x1) << " " << "x2: " << SCIPgetSolVal(scip, sol, x2) << "\n";
 
-	int n = SCIPgetNOrigVars(scip);
+	int n0 = SCIPgetNOrigVars(scip);
 
 	SCIP_VAR **vars;
 
@@ -234,23 +289,25 @@ SCIP_RETCODE execmain(int argc, const char **argv)
 
 	a = 3.14 * SCIPgetSolVal(scip, sol, x1) * SCIPgetSolVal(scip, sol, x2);
 
-	//SCIPprintBestSol(scip, stdout, TRUE);
-
-	ret = SCIPfreeReoptSolve(scip);
-
-	ret = SCIPchgVarUb(scip, x2, 2.77);
-	SCIP_CALL(ret);
-
 	SCIP_CALL((SCIPwriteOrigProblem(scip, "sciptest.lp", nullptr, FALSE)));
 	SCIP_CALL((SCIPwriteOrigProblem(scip, "sciptest.mps", nullptr, FALSE)));
 
 	SCIP_CALL((SCIPwriteTransProblem(scip, "sciptest2.lp", nullptr, FALSE)));
 
+	SCIP_VARSTATUS varStatus = SCIPvarGetStatus(x1);
+
+	//SCIP_COL *col1 = SCIPvarGetCol(x1);
+	//SCIP_BASESTAT baseStat1 = SCIPcolGetBasisStatus(col1);
+
+	//SCIPprintBestSol(scip, stdout, TRUE);
+
 	//Scip releasing all the constraints
 	SCIP_CALL(SCIPreleaseCons(scip, &cons1));
 	SCIP_CALL(SCIPreleaseCons(scip, &cons2));
 	SCIP_CALL(SCIPreleaseCons(scip, &cons3));
+#if NLP
 	SCIP_CALL(SCIPreleaseCons(scip, &cons4));
+#endif
 
 	//Freeing the variables
 	SCIP_CALL(SCIPreleaseVar(scip, &x1));
